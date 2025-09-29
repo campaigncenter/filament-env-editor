@@ -1,11 +1,11 @@
 <?php
 
-namespace GeoSot\FilamentEnvEditor;
+namespace Campaigncenter\FilamentEnvEditor;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
-use GeoSot\FilamentEnvEditor\Pages\ViewEnv;
+use Campaigncenter\FilamentEnvEditor\Pages\ViewEnv;
 
 class FilamentEnvEditorPlugin implements Plugin
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace GeoSot\FilamentEnvEditor\Pages\Actions\Backups;
+namespace Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups;
 
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Colors\Color;

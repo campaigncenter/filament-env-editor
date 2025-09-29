@@ -1,12 +1,12 @@
 <?php
 
-namespace GeoSot\FilamentEnvEditor\Pages\Actions\Backups;
+namespace Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups;
 
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Colors\Color;
 use GeoSot\EnvEditor\Exceptions\EnvException;
 use GeoSot\EnvEditor\Facades\EnvEditor;
-use GeoSot\FilamentEnvEditor\Pages\ViewEnv;
+use Campaigncenter\FilamentEnvEditor\Pages\ViewEnv;
 
 class MakeBackupAction extends Action
 {

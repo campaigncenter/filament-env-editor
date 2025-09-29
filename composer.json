@@ -1,17 +1,18 @@
 {
-    "name": "geo-sot/filament-env-editor",
+    "name": "campaigncenter/filament-env-editor",
     "description": "Access .env file though Filament admin panel",
     "keywords": [
+	"campagin-center"
         "geo-sot",
         "laravel",
         "laravel-env-editor",
         "EnvEditor",
         "filament-env-editor"
     ],
-    "homepage": "https://github.com/GeoSot/filament-env-editor",
+    "homepage": "https://github.com/campaigncenter/filament-env-editor",
     "support": {
-        "issues": "https://github.com/GeoSot/filament-env-editor/issues",
-        "source": "https://github.com/GeoSot/filament-env-editor"
+        "issues": "https://github.com/campaigncenter/filament-env-editor/issues",
+        "source": "https://github.com/campaigncenter/filament-env-editor"
     },
     "license": "MIT",
     "authors": [
@@ -37,7 +38,7 @@
     },
     "autoload": {
         "psr-4": {
-            "GeoSot\\FilamentEnvEditor\\": "src/"
+            "campaigncenter\\FilamentEnvEditor\\": "src/"
         }
     },
     "scripts": {
@@ -54,7 +55,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "GeoSot\\FilamentEnvEditor\\ServiceProvider"
+                "campaigncenter\\FilamentEnvEditor\\ServiceProvider"
             ]
         }
     },
