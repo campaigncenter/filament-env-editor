@@ -2,27 +2,6 @@
 
 namespace Campaigncenter\FilamentEnvEditor\Pages;
 
-use Filament\Forms\Components\Placeholder;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Panel;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use GeoSot\EnvEditor\Exceptions\EnvException;
-use Livewire\Component;
-use Filament\Schemas\Schema;
-use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
-use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Pages\Concerns\InteractsWithHeaderActions;
-use Filament\Pages\Page;
-use Filament\Support\Enums\Size;
-use Filament\Tables\Table;
-use GeoSot\EnvEditor\Dto\BackupObj;
-use GeoSot\EnvEditor\Dto\EntryObj;
-use GeoSot\EnvEditor\Facades\EnvEditor;
 use Campaigncenter\FilamentEnvEditor\FilamentEnvEditorPlugin;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups\DeleteBackupAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups\DownloadEnvFileAction;
@@ -34,6 +13,23 @@ use Campaigncenter\FilamentEnvEditor\Pages\Actions\CreateAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\DeleteAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\EditAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\OptimizeClearAction;
+use Filament\Forms\Components\Placeholder;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\Concerns\InteractsWithHeaderActions;
+use Filament\Pages\Page;
+use Filament\Panel;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Support\Enums\Size;
+use GeoSot\EnvEditor\Dto\BackupObj;
+use GeoSot\EnvEditor\Dto\EntryObj;
+use GeoSot\EnvEditor\Exceptions\EnvException;
+use GeoSot\EnvEditor\Facades\EnvEditor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
@@ -111,7 +107,6 @@ class ViewEnv extends Page
     }
 
     /**
-     * @return \Closure
      * @throws EnvException
      */
     private function getFirstTab(): \Closure
@@ -146,7 +141,7 @@ class ViewEnv extends Page
             ])->alignEnd(),
         ]);
 
-        return fn() => [$header, ...$envData];
+        return fn () => [$header, ...$envData];
     }
 
     private function shouldHideEnvVariable(string $key): bool
@@ -154,9 +149,6 @@ class ViewEnv extends Page
         return in_array($key, FilamentEnvEditorPlugin::get()->getHiddenKeys());
     }
 
-    /**
-     * @return \Closure
-     */
     private function getSecondTab(): \Closure
     {
         $data = EnvEditor::getAllBackUps()
@@ -187,6 +179,6 @@ class ViewEnv extends Page
             ])->alignEnd(),
         ]);
 
-        return fn() => [$header, ...$data];
+        return fn () => [$header, ...$data];
     }
 }

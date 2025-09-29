@@ -2,12 +2,12 @@
 
 namespace Campaigncenter\FilamentEnvEditor\Pages\Actions;
 
+use Campaigncenter\FilamentEnvEditor\Pages\ViewEnv;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Size;
 use GeoSot\EnvEditor\Dto\EntryObj;
 use GeoSot\EnvEditor\Facades\EnvEditor;
-use Campaigncenter\FilamentEnvEditor\Pages\ViewEnv;
 
 class EditAction extends \Filament\Actions\Action
 {
