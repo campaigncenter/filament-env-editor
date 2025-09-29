@@ -2,8 +2,7 @@
     "name": "campaigncenter/filament-env-editor",
     "description": "Access .env file though Filament admin panel",
     "keywords": [
-	"campagin-center"
-        "geo-sot",
+	    "campagin-center",
         "laravel",
         "laravel-env-editor",
         "EnvEditor",
