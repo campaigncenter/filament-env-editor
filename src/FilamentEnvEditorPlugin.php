@@ -2,10 +2,10 @@
 
 namespace Campaigncenter\FilamentEnvEditor;
 
+use Campaigncenter\FilamentEnvEditor\Pages\ViewEnv;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
-use Campaigncenter\FilamentEnvEditor\Pages\ViewEnv;
 
 class FilamentEnvEditorPlugin implements Plugin
 {
