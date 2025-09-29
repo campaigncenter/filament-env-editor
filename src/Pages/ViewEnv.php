@@ -28,6 +28,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use GeoSot\EnvEditor\Dto\BackupObj;
@@ -79,9 +80,7 @@ class ViewEnv extends Page implements HasForms, HasActions
                                                 EditAction::make("edit_{$obj->key}")->setEntry($obj),
                                                 DeleteAction::make("delete_{$obj->key}")->setEntry($obj),
                                             ])->alignEnd(),
-                                            TextEntry::make($obj->key)
-                                                ->label(null)
-                                                ->state(new HtmlString("<code>{$obj->getAsEnvLine()}</code>"))
+                                            Text::make($obj->getAsEnvLine())
                                                 ->columnSpan(4),
                                         ])->columns(5);
                                     });
@@ -109,13 +108,9 @@ class ViewEnv extends Page implements HasForms, HasActions
                                         RestoreBackupAction::make("restore_{$obj->name}")->setEntry($obj->name),
                                         ShowBackupContentAction::make("show_raw_content_{$obj->name}")->setEntry($obj),
                                     ])->alignEnd(),
-                                    Placeholder::make('name')
-                                        ->label('')
-                                        ->content(new HtmlString("<strong>{$obj->name}</strong>"))
+                                    Text::make($obj->name)
                                         ->columnSpan(2),
-                                    Placeholder::make('created_at')
-                                        ->label('')
-                                        ->content($obj->createdAt->format('Y-m-d H:i:s'))
+                                    Text::make($obj->createdAt->format('Y-m-d H:i:s'))
                                         ->columnSpan(2),
                                 ])->columns(5);
                             })->all();
