@@ -13,8 +13,12 @@ use Campaigncenter\FilamentEnvEditor\Pages\Actions\CreateAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\DeleteAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\EditAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\OptimizeClearAction;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -32,10 +36,12 @@ use GeoSot\EnvEditor\Facades\EnvEditor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
-class ViewEnv extends Page
+class ViewEnv extends Page implements HasForms, HasActions
 {
     use HasUnsavedDataChangesAlert;
     use InteractsWithHeaderActions;
+    use InteractsWithForms;
+    use InteractsWithFormActions;
 
     protected string $view = 'filament-env-editor::view-editor';
 
