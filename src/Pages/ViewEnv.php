@@ -17,6 +17,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
@@ -80,9 +81,9 @@ class ViewEnv extends Page implements HasForms, HasActions
                                                 EditAction::make("edit_{$obj->key}")->setEntry($obj),
                                                 DeleteAction::make("delete_{$obj->key}")->setEntry($obj),
                                             ])->alignEnd(),
-                                            Placeholder::make($obj->key)
+                                            TextEntry::make($obj->key)
                                                 ->label('')
-                                                ->content(new HtmlString("<code>{$obj->getAsEnvLine()}</code>"))
+                                                ->state(new HtmlString("<code>{$obj->getAsEnvLine()}</code>"))
                                                 ->columnSpan(4),
                                         ])->columns(5);
                                     });
