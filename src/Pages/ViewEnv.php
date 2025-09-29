@@ -13,12 +13,8 @@ use Campaigncenter\FilamentEnvEditor\Pages\Actions\CreateAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\DeleteAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\EditAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\OptimizeClearAction;
-use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
-use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -28,7 +24,6 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use GeoSot\EnvEditor\Dto\BackupObj;
 use GeoSot\EnvEditor\Dto\EntryObj;
@@ -37,11 +32,9 @@ use GeoSot\EnvEditor\Facades\EnvEditor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
-class ViewEnv extends Page implements HasForms
+class ViewEnv extends Page
 {
     use HasUnsavedDataChangesAlert;
-    use InteractsWithFormActions;
-    use InteractsWithForms;
     use InteractsWithHeaderActions;
 
     protected string $view = 'filament-env-editor::view-editor';
@@ -61,7 +54,7 @@ class ViewEnv extends Page implements HasForms
     /**
      * @throws EnvException
      */
-    public function form(Schema $schema): Schema
+    public function form(Form $form): Form
     {
         $tabs = Tabs::make('Tabs')
             ->tabs([
@@ -71,7 +64,7 @@ class ViewEnv extends Page implements HasForms
                     ->schema($this->getSecondTab()),
             ]);
 
-        return $schema->schema([$tabs]);
+        return $form->schema([$tabs]);
     }
 
     public function refresh(): void
