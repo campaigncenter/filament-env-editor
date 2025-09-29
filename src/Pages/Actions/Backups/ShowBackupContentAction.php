@@ -8,6 +8,7 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Size;
 use GeoSot\EnvEditor\Dto\BackupObj;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class ShowBackupContentAction extends Action
 {
@@ -38,7 +39,7 @@ class ShowBackupContentAction extends Action
         $this->size(Size::Small);
 
         $this->schema(fn () => [
-            TextEntry::make('')->state(new HtmlString("<pre>{$this->entry->rawContent}</pre>")),
+            TextEntry::make(Str::random(32))->state(new HtmlString("<pre>{$this->entry->rawContent}</pre>")),
         ]);
 
         $this->color(Color::Zinc);
