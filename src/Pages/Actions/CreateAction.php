@@ -1,16 +1,16 @@
 <?php
 
-namespace GeoSot\FilamentEnvEditor\Pages\Actions;
+namespace Campaigncenter\FilamentEnvEditor\Pages\Actions;
 
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use GeoSot\EnvEditor\Dto\EntryObj;
 use GeoSot\EnvEditor\Exceptions\EnvException;
 use GeoSot\EnvEditor\Facades\EnvEditor;
-use GeoSot\FilamentEnvEditor\Pages\ViewEnv;
+use Campaigncenter\FilamentEnvEditor\Pages\ViewEnv;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -63,7 +63,7 @@ class CreateAction extends Action
         });
 
         $this->color(Color::Teal);
-        $this->modalWidth(MaxWidth::FitContent);
+        $this->modalWidth(Width::FitContent);
     }
 
     /**

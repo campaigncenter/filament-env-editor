@@ -3,9 +3,9 @@
 namespace Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups;
 
 use Campaigncenter\FilamentEnvEditor\Pages\ViewEnv;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use GeoSot\EnvEditor\Facades\EnvEditor;
 
 class RestoreBackupAction extends Action
@@ -33,7 +33,7 @@ class RestoreBackupAction extends Action
         $this->outlined();
         $this->color(Color::Teal);
 
-        $this->size(ActionSize::Small);
+        $this->size(Size::Small);
         $this->tooltip(fn (): string => __('filament-env-editor::filament-env-editor.actions.restore-backup.tooltip',
             ['name' => $this->file]));
         $this->modalIcon('heroicon-s-bars-arrow-up');

@@ -1,15 +1,15 @@
 <?php
 
-namespace GeoSot\FilamentEnvEditor\Pages\Actions;
+namespace Campaigncenter\FilamentEnvEditor\Pages\Actions;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use GeoSot\EnvEditor\Dto\EntryObj;
 use GeoSot\EnvEditor\Facades\EnvEditor;
-use GeoSot\FilamentEnvEditor\Pages\ViewEnv;
+use Campaigncenter\FilamentEnvEditor\Pages\ViewEnv;
 
-class EditAction extends \Filament\Forms\Components\Actions\Action
+class EditAction extends \Filament\Actions\Action
 {
     private EntryObj $entry;
 
@@ -40,7 +40,7 @@ class EditAction extends \Filament\Forms\Components\Actions\Action
             EnvEditor::editKey($data['key'], $data['value']);
             $page->refresh();
         });
-        $this->size(ActionSize::Small);
+        $this->size(Size::Small);
         $this->outlined();
         $this->modalIcon('heroicon-c-cog-8-tooth');
         $this->modalHeading(__('filament-env-editor::filament-env-editor.actions.edit.modal.text'));

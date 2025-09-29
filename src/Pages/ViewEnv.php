@@ -1,30 +1,39 @@
 <?php
 
-namespace GeoSot\FilamentEnvEditor\Pages;
+namespace Campaigncenter\FilamentEnvEditor\Pages;
 
-use Filament\Forms;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Form;
+use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Panel;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use GeoSot\EnvEditor\Exceptions\EnvException;
+use Livewire\Component;
+use Filament\Schemas\Schema;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Filament\Tables\Table;
 use GeoSot\EnvEditor\Dto\BackupObj;
 use GeoSot\EnvEditor\Dto\EntryObj;
 use GeoSot\EnvEditor\Facades\EnvEditor;
-use GeoSot\FilamentEnvEditor\FilamentEnvEditorPlugin;
-use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\DeleteBackupAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\DownloadEnvFileAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\MakeBackupAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\RestoreBackupAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\ShowBackupContentAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\UploadBackupAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\CreateAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\DeleteAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\EditAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\OptimizeClearAction;
+use Campaigncenter\FilamentEnvEditor\FilamentEnvEditorPlugin;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups\DeleteBackupAction;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups\DownloadEnvFileAction;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups\MakeBackupAction;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups\RestoreBackupAction;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups\ShowBackupContentAction;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\Backups\UploadBackupAction;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\CreateAction;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\DeleteAction;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\EditAction;
+use Campaigncenter\FilamentEnvEditor\Pages\Actions\OptimizeClearAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
@@ -34,7 +43,7 @@ class ViewEnv extends Page
     use InteractsWithFormActions;
     use InteractsWithHeaderActions;
 
-    protected static string $view = 'filament-env-editor::view-editor';
+    protected string $view = 'filament-env-editor::view-editor';
 
     /**
      * @var list<mixed>
@@ -50,11 +59,11 @@ class ViewEnv extends Page
 
     public function form(Form $form): Form
     {
-        $tabs = Forms\Components\Tabs::make('Tabs')
+        $tabs = Tabs::make('Tabs')
             ->tabs([
-                Forms\Components\Tabs\Tab::make(__('filament-env-editor::filament-env-editor.tabs.current-env.title'))
+                Tab::make(__('filament-env-editor::filament-env-editor.tabs.current-env.title'))
                     ->schema($this->getFirstTab()),
-                Forms\Components\Tabs\Tab::make(__('filament-env-editor::filament-env-editor.tabs.backups.title'))
+                Tab::make(__('filament-env-editor::filament-env-editor.tabs.backups.title'))
                     ->schema($this->getSecondTab()),
             ]);
 
@@ -86,7 +95,7 @@ class ViewEnv extends Page
         return FilamentEnvEditorPlugin::get()->getNavigationLabel();
     }
 
-    public static function getSlug(): string
+    public static function getSlug(?Panel $panel = null): string
     {
         return FilamentEnvEditorPlugin::get()->getSlug();
     }
@@ -102,9 +111,10 @@ class ViewEnv extends Page
     }
 
     /**
-     * @return list<Component>
+     * @return \Closure
+     * @throws EnvException
      */
-    private function getFirstTab(): array
+    private function getFirstTab(): \Closure
     {
         $envData = EnvEditor::getEnvFileContent()
             ->filter(fn (EntryObj $obj) => !$obj->isSeparator())
@@ -113,30 +123,30 @@ class ViewEnv extends Page
                 $fields = $group
                     ->reject(fn (EntryObj $obj) => $this->shouldHideEnvVariable($obj->key))
                     ->map(function (EntryObj $obj) {
-                        return Forms\Components\Group::make([
-                            Forms\Components\Actions::make([
+                        return Group::make([
+                            Actions::make([
                                 EditAction::make("edit_{$obj->key}")->setEntry($obj),
                                 DeleteAction::make("delete_{$obj->key}")->setEntry($obj),
                             ])->alignEnd(),
-                            Forms\Components\Placeholder::make($obj->key)
+                            Placeholder::make($obj->key)
                                 ->label('')
                                 ->content(new HtmlString("<code>{$obj->getAsEnvLine()}</code>"))
                                 ->columnSpan(4),
                         ])->columns(5);
                     });
 
-                return Forms\Components\Section::make()->schema($fields->all())->columns(1);
+                return Section::make()->schema($fields->all())->columns(1);
             })
-            ->filter(fn (Forms\Components\Section $s) => $s->hasChildComponentContainer(true))
+            ->filter(fn (Section $s) => count($s->getChildSchemas(true)) > 0)
             ->all();
 
-        $header = Forms\Components\Group::make([
-            Forms\Components\Actions::make([
+        $header = Group::make([
+            Actions::make([
                 CreateAction::make('Add'),
             ])->alignEnd(),
         ]);
 
-        return [$header, ...$envData];
+        return fn() => [$header, ...$envData];
     }
 
     private function shouldHideEnvVariable(string $key): bool
@@ -145,38 +155,38 @@ class ViewEnv extends Page
     }
 
     /**
-     * @return list<Component>
+     * @return \Closure
      */
-    private function getSecondTab(): array
+    private function getSecondTab(): \Closure
     {
         $data = EnvEditor::getAllBackUps()
             ->map(function (BackupObj $obj) {
-                return Forms\Components\Group::make([
-                    Forms\Components\Actions::make([
+                return Group::make([
+                    Actions::make([
                         DeleteBackupAction::make("delete_{$obj->name}")->setEntry($obj),
-                        DownloadEnvFileAction::make("download_{$obj->name}")->setEntry($obj->name)->hiddenLabel()->size(ActionSize::Small),
+                        DownloadEnvFileAction::make("download_{$obj->name}")->setEntry($obj->name)->hiddenLabel()->size(Size::Small),
                         RestoreBackupAction::make("restore_{$obj->name}")->setEntry($obj->name),
                         ShowBackupContentAction::make("show_raw_content_{$obj->name}")->setEntry($obj),
                     ])->alignEnd(),
-                    Forms\Components\Placeholder::make('name')
+                    Placeholder::make('name')
                         ->label('')
                         ->content(new HtmlString("<strong>{$obj->name}</strong>"))
                         ->columnSpan(2),
-                    Forms\Components\Placeholder::make('created_at')
+                    Placeholder::make('created_at')
                         ->label('')
-                        ->content($obj->createdAt->format(Table::$defaultDateTimeDisplayFormat))
+                        ->content($obj->createdAt->format('Y-m-d H:i:s'))
                         ->columnSpan(2),
                 ])->columns(5);
             })->all();
 
-        $header = Forms\Components\Group::make([
-            Forms\Components\Actions::make([
+        $header = Group::make([
+            Actions::make([
                 DownloadEnvFileAction::make('download_current}')->tooltip('')->outlined(false),
                 UploadBackupAction::make('upload'),
                 MakeBackupAction::make('backup'),
             ])->alignEnd(),
         ]);
 
-        return [$header, ...$data];
+        return fn() => [$header, ...$data];
     }
 }
