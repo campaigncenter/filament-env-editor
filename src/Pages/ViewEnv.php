@@ -13,7 +13,10 @@ use Campaigncenter\FilamentEnvEditor\Pages\Actions\CreateAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\DeleteAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\EditAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\OptimizeClearAction;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
@@ -33,10 +36,11 @@ use GeoSot\EnvEditor\Facades\EnvEditor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
-class ViewEnv extends Page
+class ViewEnv extends Page implements HasForms
 {
     use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
+    use InteractsWithForms;
     use InteractsWithHeaderActions;
 
     protected string $view = 'filament-env-editor::view-editor';
@@ -53,7 +57,7 @@ class ViewEnv extends Page
         ];
     }
 
-    public function form(Form $form): Form
+    public function form(Form $schema): Form
     {
         $tabs = Tabs::make('Tabs')
             ->tabs([
@@ -63,8 +67,7 @@ class ViewEnv extends Page
                     ->schema($this->getSecondTab()),
             ]);
 
-        return $form
-            ->schema([$tabs]);
+        return $schema->schema([$tabs]);
     }
 
     public function refresh(): void
