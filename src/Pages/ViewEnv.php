@@ -87,7 +87,6 @@ class ViewEnv extends Page implements HasForms, HasActions
 
                                 return Section::make()->schema($fields->all())->columns(1);
                             })
-                            ->filter(fn (Section $s) => count($s->getChildSchemas(true)) > 0)
                             ->all();
 
                         $header = Group::make([
