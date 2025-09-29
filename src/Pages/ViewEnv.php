@@ -132,7 +132,9 @@ class ViewEnv extends Page implements HasForms, HasActions
                     }),
             ]);
 
-        return $schema->components([$tabs]);
+        return $schema
+            ->components([$tabs])
+            ->statePath('data');
     }
 
     public function refresh(): void
