@@ -73,6 +73,8 @@ class ViewEnv extends Page implements HasForms, HasActions
                                 $fields = $group
                                     ->reject(fn (EntryObj $obj) => in_array($obj->key, FilamentEnvEditorPlugin::get()->getHiddenKeys()))
                                     ->map(function (EntryObj $obj) {
+                                        ray($obj);
+
                                         return Group::make([
                                             Actions::make([
                                                 EditAction::make("edit_{$obj->key}")->setEntry($obj),
