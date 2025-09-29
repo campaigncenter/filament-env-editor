@@ -19,21 +19,12 @@ use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
-use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Pages\Concerns\InteractsWithHeaderActions;
-use Filament\Pages\Page;
-use Filament\Panel;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
-use Filament\Tables\Table;
 use GeoSot\EnvEditor\Dto\BackupObj;
 use GeoSot\EnvEditor\Dto\EntryObj;
 use GeoSot\EnvEditor\Exceptions\EnvException;
@@ -41,14 +32,12 @@ use GeoSot\EnvEditor\Facades\EnvEditor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
-class ViewEnv extends Page implements HasForms
+class ViewEnv extends Page
 {
     use HasUnsavedDataChangesAlert;
     use InteractsWithHeaderActions;
-    use InteractsWithFormActions;
-    use InteractsWithForms;
 
-    protected static string $view = 'filament-env-editor::view-editor';
+    protected string $view = 'filament-env-editor::view-editor';
 
     /**
      * @var list<mixed>
@@ -65,17 +54,79 @@ class ViewEnv extends Page implements HasForms
     /**
      * @throws EnvException
      */
-    public function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
         $tabs = Tabs::make('Tabs')
             ->tabs([
                 Tab::make(__('filament-env-editor::filament-env-editor.tabs.current-env.title'))
-                    ->schema($this->getFirstTab()),
+                    ->schema(function () {
+                        $envData = EnvEditor::getEnvFileContent()
+                            ->filter(fn (EntryObj $obj) => !$obj->isSeparator())
+                            ->groupBy('group')
+                            ->map(function (Collection $group) {
+                                $fields = $group
+                                    ->reject(fn (EntryObj $obj) => in_array($obj->key, FilamentEnvEditorPlugin::get()->getHiddenKeys()))
+                                    ->map(function (EntryObj $obj) {
+                                        return Group::make([
+                                            Actions::make([
+                                                EditAction::make("edit_{$obj->key}")->setEntry($obj),
+                                                DeleteAction::make("delete_{$obj->key}")->setEntry($obj),
+                                            ])->alignEnd(),
+                                            Placeholder::make($obj->key)
+                                                ->label('')
+                                                ->content(new HtmlString("<code>{$obj->getAsEnvLine()}</code>"))
+                                                ->columnSpan(4),
+                                        ])->columns(5);
+                                    });
+
+                                return Section::make()->schema($fields->all())->columns(1);
+                            })
+                            ->filter(fn (Section $s) => count($s->getChildSchemas(true)) > 0)
+                            ->all();
+
+                        $header = Group::make([
+                            Actions::make([
+                                CreateAction::make('Add'),
+                            ])->alignEnd(),
+                        ]);
+
+                        return [$header, ...$envData];
+                    }),
                 Tab::make(__('filament-env-editor::filament-env-editor.tabs.backups.title'))
-                    ->schema($this->getSecondTab()),
+                    ->schema(function () {
+                        $data = EnvEditor::getAllBackUps()
+                            ->map(function (BackupObj $obj) {
+                                return Group::make([
+                                    Actions::make([
+                                        DeleteBackupAction::make("delete_{$obj->name}")->setEntry($obj),
+                                        DownloadEnvFileAction::make("download_{$obj->name}")->setEntry($obj->name)->hiddenLabel()->size(Size::Small),
+                                        RestoreBackupAction::make("restore_{$obj->name}")->setEntry($obj->name),
+                                        ShowBackupContentAction::make("show_raw_content_{$obj->name}")->setEntry($obj),
+                                    ])->alignEnd(),
+                                    Placeholder::make('name')
+                                        ->label('')
+                                        ->content(new HtmlString("<strong>{$obj->name}</strong>"))
+                                        ->columnSpan(2),
+                                    Placeholder::make('created_at')
+                                        ->label('')
+                                        ->content($obj->createdAt->format('Y-m-d H:i:s'))
+                                        ->columnSpan(2),
+                                ])->columns(5);
+                            })->all();
+
+                        $header = Group::make([
+                            Actions::make([
+                                DownloadEnvFileAction::make('download_current}')->tooltip('')->outlined(false),
+                                UploadBackupAction::make('upload'),
+                                MakeBackupAction::make('backup'),
+                            ])->alignEnd(),
+                        ]);
+
+                        return [$header, ...$data];
+                    }),
             ]);
 
-        return $form->schema([$tabs]);
+        return $schema->components([$tabs]);
     }
 
     public function refresh(): void
@@ -115,85 +166,5 @@ class ViewEnv extends Page implements HasForms
     public static function canAccess(): bool
     {
         return FilamentEnvEditorPlugin::get()->isAuthorized();
-    }
-
-    /**
-     * @return list(\Filament\Forms\Components\Component)
-     * @throws EnvException
-     */
-    private function getFirstTab(): array
-    {
-        $envData = EnvEditor::getEnvFileContent()
-            ->filter(fn (EntryObj $obj) => !$obj->isSeparator())
-            ->groupBy('group')
-            ->map(function (Collection $group) {
-                $fields = $group
-                    ->reject(fn (EntryObj $obj) => $this->shouldHideEnvVariable($obj->key))
-                    ->map(function (EntryObj $obj) {
-                        return Group::make([
-                            Actions::make([
-                                EditAction::make("edit_{$obj->key}")->setEntry($obj),
-                                DeleteAction::make("delete_{$obj->key}")->setEntry($obj),
-                            ])->alignEnd(),
-                            Placeholder::make($obj->key)
-                                ->label('')
-                                ->content(new HtmlString("<code>{$obj->getAsEnvLine()}</code>"))
-                                ->columnSpan(4),
-                        ])->columns(5);
-                    });
-
-                return Section::make()->schema($fields->all())->columns(1);
-            })
-            ->filter(fn (Section $s) => $s->hasChildComponentContainer(true))
-            ->all();
-
-        $header = Group::make([
-            Actions::make([
-                CreateAction::make('Add'),
-            ])->alignEnd(),
-        ]);
-
-        return [$header, ...$envData];
-    }
-
-    private function shouldHideEnvVariable(string $key): bool
-    {
-        return in_array($key, FilamentEnvEditorPlugin::get()->getHiddenKeys());
-    }
-
-    /**
-     * @return list(\Filament\Forms\Components\Component)
-     */
-    private function getSecondTab(): array
-    {
-        $data = EnvEditor::getAllBackUps()
-            ->map(function (BackupObj $obj) {
-                return Group::make([
-                    Actions::make([
-                        DeleteBackupAction::make("delete_{$obj->name}")->setEntry($obj),
-                        DownloadEnvFileAction::make("download_{$obj->name}")->setEntry($obj->name)->hiddenLabel()->size(Size::Small),
-                        RestoreBackupAction::make("restore_{$obj->name}")->setEntry($obj->name),
-                        ShowBackupContentAction::make("show_raw_content_{$obj->name}")->setEntry($obj),
-                    ])->alignEnd(),
-                    Placeholder::make('name')
-                        ->label('')
-                        ->content(new HtmlString("<strong>{$obj->name}</strong>"))
-                        ->columnSpan(2),
-                    Placeholder::make('created_at')
-                        ->label('')
-                        ->content($obj->createdAt->format(Table::$defaultDateTimeDisplayFormat))
-                        ->columnSpan(2),
-                ])->columns(5);
-            })->all();
-
-        $header = Group::make([
-            Actions::make([
-                DownloadEnvFileAction::make('download_current}')->tooltip('')->outlined(false),
-                UploadBackupAction::make('upload'),
-                MakeBackupAction::make('backup'),
-            ])->alignEnd(),
-        ]);
-
-        return [$header, ...$data];
     }
 }
