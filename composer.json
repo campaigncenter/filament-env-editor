@@ -33,11 +33,10 @@
         "orchestra/testbench": ">=9",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0"
-
     },
     "autoload": {
         "psr-4": {
-            "campaigncenter\\FilamentEnvEditor\\": "src/"
+            "Campaigncenter\\FilamentEnvEditor\\": "src/"
         }
     },
     "scripts": {
@@ -54,7 +53,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "campaigncenter\\FilamentEnvEditor\\ServiceProvider"
+                "Campaigncenter\\FilamentEnvEditor\\ServiceProvider"
             ]
         }
     },
