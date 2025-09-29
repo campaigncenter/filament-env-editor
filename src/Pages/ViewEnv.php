@@ -60,7 +60,7 @@ class ViewEnv extends Page implements HasForms, HasActions
     /**
      * @throws EnvException
      */
-    public static function form(Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
         $tabs = Tabs::make('Tabs')
             ->tabs([
