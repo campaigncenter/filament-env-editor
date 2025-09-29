@@ -24,7 +24,16 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\Concerns\InteractsWithHeaderActions;
+use Filament\Pages\Page;
+use Filament\Panel;
 use Filament\Support\Enums\Size;
+use Filament\Tables\Table;
 use GeoSot\EnvEditor\Dto\BackupObj;
 use GeoSot\EnvEditor\Dto\EntryObj;
 use GeoSot\EnvEditor\Exceptions\EnvException;
@@ -32,12 +41,14 @@ use GeoSot\EnvEditor\Facades\EnvEditor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
-class ViewEnv extends Page
+class ViewEnv extends Page implements HasForms
 {
     use HasUnsavedDataChangesAlert;
     use InteractsWithHeaderActions;
+    use InteractsWithFormActions;
+    use InteractsWithForms;
 
-    protected string $view = 'filament-env-editor::view-editor';
+    protected static string $view = 'filament-env-editor::view-editor';
 
     /**
      * @var list<mixed>
@@ -107,9 +118,10 @@ class ViewEnv extends Page
     }
 
     /**
+     * @return list(\Filament\Forms\Components\Component)
      * @throws EnvException
      */
-    private function getFirstTab(): \Closure
+    private function getFirstTab(): array
     {
         $envData = EnvEditor::getEnvFileContent()
             ->filter(fn (EntryObj $obj) => !$obj->isSeparator())
@@ -132,7 +144,7 @@ class ViewEnv extends Page
 
                 return Section::make()->schema($fields->all())->columns(1);
             })
-            ->filter(fn (Section $s) => count($s->getChildSchemas(true)) > 0)
+            ->filter(fn (Section $s) => $s->hasChildComponentContainer(true))
             ->all();
 
         $header = Group::make([
@@ -141,7 +153,7 @@ class ViewEnv extends Page
             ])->alignEnd(),
         ]);
 
-        return fn () => [$header, ...$envData];
+        return [$header, ...$envData];
     }
 
     private function shouldHideEnvVariable(string $key): bool
@@ -149,7 +161,10 @@ class ViewEnv extends Page
         return in_array($key, FilamentEnvEditorPlugin::get()->getHiddenKeys());
     }
 
-    private function getSecondTab(): \Closure
+    /**
+     * @return list(\Filament\Forms\Components\Component)
+     */
+    private function getSecondTab(): array
     {
         $data = EnvEditor::getAllBackUps()
             ->map(function (BackupObj $obj) {
@@ -166,7 +181,7 @@ class ViewEnv extends Page
                         ->columnSpan(2),
                     Placeholder::make('created_at')
                         ->label('')
-                        ->content($obj->createdAt->format('Y-m-d H:i:s'))
+                        ->content($obj->createdAt->format(Table::$defaultDateTimeDisplayFormat))
                         ->columnSpan(2),
                 ])->columns(5);
             })->all();
@@ -179,6 +194,6 @@ class ViewEnv extends Page
             ])->alignEnd(),
         ]);
 
-        return fn () => [$header, ...$data];
+        return [$header, ...$data];
     }
 }
