@@ -28,6 +28,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use GeoSot\EnvEditor\Dto\BackupObj;
 use GeoSot\EnvEditor\Dto\EntryObj;
@@ -57,7 +58,10 @@ class ViewEnv extends Page implements HasForms
         ];
     }
 
-    public function form(Form $schema): Form
+    /**
+     * @throws EnvException
+     */
+    public function form(Schema $schema): Schema
     {
         $tabs = Tabs::make('Tabs')
             ->tabs([
