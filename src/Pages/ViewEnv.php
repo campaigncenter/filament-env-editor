@@ -14,10 +14,8 @@ use Campaigncenter\FilamentEnvEditor\Pages\Actions\DeleteAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\EditAction;
 use Campaigncenter\FilamentEnvEditor\Pages\Actions\OptimizeClearAction;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
@@ -36,7 +34,6 @@ use GeoSot\EnvEditor\Dto\EntryObj;
 use GeoSot\EnvEditor\Exceptions\EnvException;
 use GeoSot\EnvEditor\Facades\EnvEditor;
 use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
 
 class ViewEnv extends Page implements HasForms, HasActions
 {
