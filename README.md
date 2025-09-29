@@ -1,6 +1,6 @@
 # Filament Env Editor
 
-Working fork of filament-env-editor by [GeoSot](https://github.com/GeoSot/filament-env-editor) for Filament 4.
+Working fork of [GeoSot/filament-env-editor](https://github.com/GeoSot/filament-env-editor) for Filament 4.
 
 <p align="center">
     <img src="https://github.com/GeoSot/filament-env-editor/assets/22406063/e53b56d9-3e2d-4943-b1bd-4b18b6d5fc15" alt="Banner" style="width: 100%; max-width: 800px; border-radius: 10px" />
