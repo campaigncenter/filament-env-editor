@@ -105,7 +105,11 @@ class ViewEnv extends Page implements HasForms, HasActions
                                         RestoreBackupAction::make("restore_{$obj->name}")->setEntry($obj->name),
                                         ShowBackupContentAction::make("show_raw_content_{$obj->name}")->setEntry($obj),
                                     ])->alignEnd(),
-                                    Text::make($obj->name)
+                                    Text::make(
+                                        str('**'.$obj->name.'**')
+                                            ->inlineMarkdown()
+                                            ->toHtmlString()
+                                    )
                                         ->columnSpan(2),
                                     Text::make($obj->createdAt->format('Y-m-d H:i:s'))
                                         ->columnSpan(2),
